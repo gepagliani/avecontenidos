@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVE Contenidos | Transmisión Profesional</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{--bg:#0a0a0a;--red:#e61919;--wh:#fff;--gray:#1a1a1a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--wh);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:#0a0a0a;}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:3px;}
+
+/* PROGRESS */
+#prog{position:fixed;top:0;left:0;height:3px;background:linear-gradient(to right,var(--red),#ff6060);z-index:300;width:0;transition:width .1s;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:background .4s;}
+nav.scrolled{background:rgba(10,10,10,.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.1);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;font-weight:400;color:#fff;text-decoration:none;letter-spacing:2px;display:flex;align-items:center;gap:.5rem;}
+.nav-logo span{color:var(--red);}
+.nav-links{display:flex;align-items:center;gap:1.6rem;list-style:none;}
+.nav-links a{color:rgba(255,255,255,.7);text-decoration:none;font-size:.875rem;font-weight:500;transition:color .25s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--red);transition:width .3s;}
+.nav-links a:hover{color:#fff;}.nav-links a:hover::after{width:100%;}
+.nav-cta{background:var(--red)!important;color:#fff!important;padding:.6rem 1.4rem!important;border-radius:100px;font-weight:600!important;transition:all .25s!important;white-space:nowrap;}
+.nav-cta:hover{background:#ff3333!important;transform:scale(1.05)!important;box-shadow:0 0 20px rgba(230,25,25,.4);}.nav-cta::after{display:none!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;z-index:101;}
+.hamburger span{width:24px;height:2px;background:#fff;border-radius:2px;transition:all .3s;}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;padding:6rem 1.5rem 4rem;background:radial-gradient(ellipse at center,rgba(230,25,25,.15) 0%,transparent 70%),var(--bg);}
+.hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:60px 60px;}
+.glow{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none;}
+.glow-1{width:600px;height:600px;background:rgba(230,25,25,.12);top:-100px;left:15%;}
+.glow-2{width:400px;height:400px;background:rgba(230,25,25,.08);bottom:10%;right:10%;}
+.hero-content{position:relative;z-index:2;max-width:900px;width:100%;}
+
+/* LOGO */
+.logo-container{margin-bottom:2rem;display:flex;flex-direction:column;align-items:center;gap:1rem;}
+.main-logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,10vw,6rem);font-weight:400;color:#fff;letter-spacing:4px;line-height:1;text-shadow:0 0 40px rgba(230,25,25,.3),0 2px 10px rgba(0,0,0,.5);display:flex;align-items:center;gap:.5rem;}
+.main-logo .accent{color:var(--red);text-shadow:0 0 30px rgba(230,25,25,.6);}
+.logo-subtitle{font-size:.9rem;letter-spacing:.3em;color:rgba(255,255,255,.6);text-transform:uppercase;font-weight:500;}
+
+/* LIVE BADGE */
+.live-badge{display:inline-flex;align-items:center;gap:.85rem;padding:.75rem 1.5rem;background:rgba(230,25,25,.15);border:1.5px solid rgba(230,25,25,.6);border-radius:100px;margin-bottom:2rem;text-decoration:none;color:#fff;font-size:.85rem;font-weight:700;letter-spacing:.1em;transition:all .3s;position:relative;overflow:hidden;animation:badgePulseAnim 2.5s ease-in-out infinite;backdrop-filter:blur(10px);}
+.live-badge::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(230,25,25,.3),transparent);transform:translateX(-100%);animation:shimmer 2.5s ease-in-out infinite;}
+.live-badge:hover{background:rgba(230,25,25,.3);border-color:var(--red);transform:scale(1.05);box-shadow:0 0 50px rgba(230,25,25,.4);}
+@keyframes badgePulseAnim{0%,100%{box-shadow:0 0 15px rgba(230,25,25,.3);}50%{box-shadow:0 0 35px rgba(230,25,25,.6),0 0 60px rgba(230,25,25,.2);}}
+@keyframes shimmer{0%{transform:translateX(-100%);}50%,100%{transform:translateX(100%);}}
+.live-dot-wrap{position:relative;width:14px;height:14px;flex-shrink:0;}
+.live-dot{position:absolute;inset:0;background:var(--red);border-radius:50%;animation:dot-core 1.2s ease-in-out infinite;}
+.live-ring{position:absolute;inset:-4px;border:2px solid var(--red);border-radius:50%;opacity:0;animation:ring-out 1.5s ease-out infinite;}
+@keyframes dot-core{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(.85);opacity:.8;}}
+@keyframes ring-out{0%{transform:scale(.5);opacity:.8;}100%{transform:scale(1.8);opacity:0;}}
+
+.hero-sub{font-size:clamp(1.1rem,3vw,1.5rem);font-weight:300;color:rgba(255,255,255,.7);letter-spacing:.05em;margin-bottom:1.5rem;}
+.hero-desc{max-width:600px;margin:0 auto 2.5rem;font-size:clamp(.95rem,2vw,1.1rem);color:rgba(255,255,255,.5);line-height:1.8;}
+.hero-btns{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-bottom:2rem;}
+.btn-primary{background:var(--red);color:#fff;padding:1rem 2rem;border-radius:100px;text-decoration:none;font-weight:600;font-size:1rem;transition:all .25s;box-shadow:0 4px 30px rgba(230,25,25,.3);display:inline-flex;align-items:center;gap:.5rem;}
+.btn-primary:hover{background:#ff3333;transform:translateY(-2px);box-shadow:0 8px 40px rgba(230,25,25,.5);}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;padding:1rem 2rem;border-radius:100px;text-decoration:none;font-weight:500;font-size:1rem;border:1px solid rgba(255,255,255,.2);transition:all .25s;display:inline-flex;align-items:center;gap:.5rem;}
+.btn-ghost:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.4);transform:translateY(-2px);}
+.hero-phone{color:rgba(255,255,255,.4);text-decoration:none;font-size:.9rem;transition:color .25s;display:inline-flex;align-items:center;gap:.5rem;}
+.hero-phone:hover{color:var(--red);}
+
+/* SCROLL */
+.scroll-indicator{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:.5;}
+.scroll-indicator span{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.6);}
+.scroll-line{width:1px;height:50px;background:linear-gradient(to bottom,var(--red),transparent);animation:scrollLine 2s ease-in-out infinite;}
+@keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+
+/* SECTIONS */
+.sw{max-width:1200px;margin:0 auto;padding:5rem 1.5rem;}
+.sl{font-size:.75rem;font-weight:700;letter-spacing:.25em;color:var(--red);text-transform:uppercase;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;}
+.sl::before{content:'';width:20px;height:1px;background:var(--red);}
+.st{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,4.5rem);line-height:1;margin-bottom:1.5rem;letter-spacing:.02em;color:#fff;}
+.sd{color:rgba(255,255,255,.5);font-size:clamp(1rem,2vw,1.1rem);max-width:550px;line-height:1.8;margin-bottom:3rem;}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;}
+.sc{background:var(--gray);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2rem;transition:all .3s;position:relative;overflow:hidden;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--red),transparent);transform:scaleX(0);transition:transform .3s;}
+.sc:hover{border-color:rgba(230,25,25,.3);transform:translateY(-5px);background:#1f1f1f;}
+.sc:hover::before{transform:scaleX(1);}
+.sc-icon{font-size:2.5rem;margin-bottom:1rem;display:block;}
+.sc h3{font-size:1.1rem;font-weight:600;margin-bottom:.75rem;color:#fff;}
+.sc p{color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.7;}
+
+/* GALLERY — tamaño uniforme forzado */
+.gallery-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;}
+.filter-btns{display:flex;gap:.5rem;flex-wrap:wrap;}
+.fb{padding:.5rem 1.2rem;border-radius:100px;font-size:.8rem;font-weight:600;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.5);cursor:pointer;transition:all .25s;}
+.fb.active,.fb:hover{background:var(--red);border-color:var(--red);color:#fff;}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+
+/* Todas las fotos: mismo tamaño fijo 16:9, object-fit:cover */
+.gitem{
+  overflow:hidden;
+  border-radius:12px;
+  cursor:pointer;
+  position:relative;
+  background:var(--gray);
+  aspect-ratio:16/9;       /* ratio uniforme */
+  width:100%;              /* ocupa celda completa */
+  transition:all .3s;
+}
+.gitem:hover{transform:scale(1.02);z-index:2;box-shadow:0 20px 40px rgba(0,0,0,.4);}
+.gitem img{
+  width:100%;
+  height:100%;
+  object-fit:cover;        /* recorta para rellenar sin distorsión */
+  object-position:center;
+  display:block;
+  transition:transform .6s cubic-bezier(0.4,0,0.2,1);
+}
+.gitem:hover img{transform:scale(1.08);}
+.g-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,transparent 55%);opacity:0;transition:opacity .3s;display:flex;align-items:flex-end;padding:1rem;}
+.gitem:hover .g-overlay{opacity:1;}
+.g-overlay span{font-size:.75rem;font-weight:700;letter-spacing:.1em;color:#fff;text-transform:uppercase;}
+.gallery-empty{grid-column:1/-1;text-align:center;padding:4rem 1rem;color:rgba(255,255,255,.25);font-size:1rem;}
+.gallery-empty span{display:block;font-size:3rem;margin-bottom:1rem;}
+
+/* TECH */
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;}
+.ti{background:var(--gray);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:1.25rem;transition:all .25s;}
+.ti:hover{border-color:rgba(230,25,25,.3);background:#1f1f1f;}
+.ti span{font-size:.75rem;color:rgba(255,255,255,.4);display:block;margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.05em;}
+.ti strong{font-size:1rem;color:#fff;font-weight:600;}
+
+/* CONTACT */
+.contact-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+.contact-info p{color:rgba(255,255,255,.5);margin-bottom:2rem;line-height:1.7;}
+.contact-links{display:flex;flex-direction:column;gap:1rem;}
+.cl{display:flex;align-items:center;gap:1rem;padding:1.25rem;background:var(--gray);border:1px solid rgba(255,255,255,.08);border-radius:12px;text-decoration:none;color:#fff;transition:all .25s;}
+.cl:hover{border-color:var(--red);background:#1f1f1f;transform:translateX(5px);}
+.cl-icon{font-size:1.5rem;width:2.5rem;height:2.5rem;display:flex;align-items:center;justify-content:center;background:rgba(230,25,25,.1);border-radius:50%;color:var(--red);}
+.cl-text span{display:block;font-size:.75rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;}
+.cl-text strong{font-size:1rem;font-weight:600;}
+
+/* FOOTER */
+footer{border-top:1px solid rgba(255,255,255,.08);padding:2.5rem 1.5rem;background:#050505;}
+.footer-content{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:#fff;letter-spacing:2px;}
+.footer-logo span{color:var(--red);}
+footer p{color:rgba(255,255,255,.3);font-size:.8rem;}
+.footer-socials{display:flex;gap:1.5rem;}
+.footer-socials a{color:rgba(255,255,255,.4);text-decoration:none;font-size:.85rem;transition:all .25s;display:flex;align-items:center;gap:.5rem;}
+.footer-socials a:hover{color:var(--red);}
+
+/* LIGHTBOX */
+.lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:1000;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(10px);}
+.lb.open{display:flex;}
+.lb-img{max-width:95vw;max-height:90vh;object-fit:contain;border-radius:8px;box-shadow:0 25px 50px rgba(0,0,0,.5);}
+.lb-close{position:absolute;top:1.5rem;right:1.5rem;background:rgba(255,255,255,.1);border:none;color:#fff;width:48px;height:48px;border-radius:50%;font-size:1.5rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;}
+.lb-close:hover{background:var(--red);transform:rotate(90deg);}
+.lb-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:none;color:#fff;width:50px;height:50px;border-radius:50%;font-size:1.5rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;}
+.lb-btn:hover{background:var(--red);}
+#lb-prev{left:1.5rem;}#lb-next{right:1.5rem;}
+.lb-caption{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,.5);padding:.5rem 1.2rem;border-radius:100px;}
+
+/* ADMIN LOGIN MODAL */
+#admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(20px);z-index:500;align-items:center;justify-content:center;padding:1rem;}
+#admin-overlay.open{display:flex;}
+.admin-modal{background:var(--gray);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:2.5rem;width:100%;max-width:440px;position:relative;box-shadow:0 25px 60px rgba(0,0,0,.6);}
+.admin-modal h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;margin-bottom:.25rem;color:#fff;}
+.admin-modal .admin-hint{color:rgba(255,255,255,.35);font-size:.82rem;margin-bottom:2rem;line-height:1.5;}
+.admin-field{margin-bottom:1.25rem;}
+.admin-field label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:.5rem;text-transform:uppercase;}
+.admin-field input{width:100%;background:#0a0a0a;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:1rem;color:#fff;font-size:1rem;font-family:'DM Sans',sans-serif;transition:all .25s;outline:none;}
+.admin-field input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(230,25,25,.12);}
+.admin-login-btn{width:100%;background:var(--red);color:#fff;border:none;border-radius:10px;padding:1rem;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s;margin-top:.5rem;font-family:'DM Sans',sans-serif;letter-spacing:.04em;}
+.admin-login-btn:hover{background:#ff3333;transform:scale(1.02);box-shadow:0 4px 20px rgba(230,25,25,.4);}
+.admin-error{color:#ff6060;font-size:.85rem;margin-top:1rem;display:none;text-align:center;padding:.75rem;background:rgba(230,25,25,.1);border-radius:8px;border:1px solid rgba(230,25,25,.2);}
+.admin-close{position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,.08);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;}
+.admin-close:hover{background:rgba(255,255,255,.18);}
+
+/* ADMIN PANEL */
+.admin-panel{display:none;background:var(--gray);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2.5rem;width:100%;max-width:740px;position:relative;max-height:92vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.6);}
+.admin-panel.open{display:block;}
+.admin-panel h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;margin-bottom:.25rem;color:#fff;}
+.admin-panel .sub{color:rgba(255,255,255,.4);font-size:.88rem;margin-bottom:1.5rem;}
+.admin-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:1rem;}
+.admin-tab{padding:.75rem 1.25rem;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:8px;color:rgba(255,255,255,.6);cursor:pointer;transition:all .25s;font-size:.85rem;font-weight:600;font-family:'DM Sans',sans-serif;}
+.admin-tab:hover{border-color:rgba(255,255,255,.3);color:#fff;}
+.admin-tab.active{background:var(--red);border-color:var(--red);color:#fff;}
+
+/* STORAGE INFO BAR */
+.storage-bar-wrap{background:#0a0a0a;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem;border:1px solid rgba(255,255,255,.07);}
+.storage-bar-track{flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;}
+.storage-bar-fill{height:100%;background:linear-gradient(90deg,var(--red),#ff6060);border-radius:3px;transition:width .4s;}
+.storage-bar-label{font-size:.75rem;color:rgba(255,255,255,.4);white-space:nowrap;}
+
+/* DROP AREA */
+.drop-area{border:2px dashed rgba(255,255,255,.18);border-radius:16px;padding:2.5rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;margin-bottom:1rem;background:#0a0a0a;}
+.drop-area:hover,.drop-area.over{border-color:var(--red);background:rgba(230,25,25,.05);}
+.drop-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.d-icon{font-size:2.5rem;margin-bottom:.75rem;}
+.drop-area p{color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.6;}
+.drop-area strong{color:rgba(255,255,255,.85);}
+
+/* TITLE INPUT */
+.title-input-row{display:flex;gap:.75rem;margin-bottom:1rem;align-items:center;}
+.title-input-row label{font-size:.75rem;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.45);text-transform:uppercase;white-space:nowrap;}
+.title-input-row input{flex:1;background:#0a0a0a;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:.8rem 1rem;color:#fff;font-size:.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .25s;}
+.title-input-row input:focus{border-color:var(--red);}
+
+/* CAT SELECT */
+.cat-select{width:100%;background:#0a0a0a;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:1rem;color:#fff;font-size:.9rem;font-family:'DM Sans',sans-serif;margin-bottom:1.25rem;outline:none;cursor:pointer;transition:border-color .25s;}
+.cat-select:focus{border-color:var(--red);}
+
+/* PREVIEW GRID */
+.preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.25rem;}
+.prev-item{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:16/9;background:#0a0a0a;border:1px solid rgba(255,255,255,.1);}
+.prev-item img{width:100%;height:100%;object-fit:cover;}
+.prev-remove{position:absolute;top:.4rem;right:.4rem;background:rgba(230,25,25,.9);border:none;color:#fff;width:26px;height:26px;border-radius:50%;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;line-height:1;}
+.prev-remove:hover{background:#ff3333;transform:scale(1.1);}
+.prev-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.85),transparent);padding:.5rem;}
+.prev-info span{font-size:.6rem;color:rgba(255,255,255,.7);text-transform:uppercase;}
+
+/* UPLOAD PROGRESS */
+.upload-progress{background:#0a0a0a;border-radius:10px;overflow:hidden;height:8px;margin-bottom:.75rem;display:none;}
+.upload-progress-bar{height:100%;background:linear-gradient(90deg,var(--red),#ff6060);width:0;transition:width .2s;border-radius:10px;}
+.upload-status{font-size:.82rem;color:rgba(255,255,255,.4);text-align:center;margin-bottom:.75rem;display:none;}
+
+/* ADMIN ACTIONS */
+.admin-action-btns{display:flex;gap:1rem;}
+.btn-confirm{flex:1;background:var(--red);color:#fff;border:none;border-radius:10px;padding:1rem;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.btn-confirm:hover{background:#ff3333;transform:translateY(-2px);box-shadow:0 4px 20px rgba(230,25,25,.35);}
+.btn-confirm:disabled{background:rgba(255,255,255,.08);color:rgba(255,255,255,.25);cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-logout{background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:1rem 1.25rem;font-size:.9rem;cursor:pointer;transition:all .25s;font-family:'DM Sans',sans-serif;}
+.btn-logout:hover{background:rgba(255,255,255,.12);color:#fff;}
+
+/* MESSAGES */
+.success-msg{background:rgba(40,200,80,.12);border:1px solid rgba(40,200,80,.35);border-radius:10px;padding:1rem;text-align:center;color:#5af094;font-size:.9rem;margin-bottom:1rem;display:none;}
+.error-msg{background:rgba(230,25,25,.12);border:1px solid rgba(230,25,25,.35);border-radius:10px;padding:1rem;text-align:center;color:#ff6060;font-size:.9rem;margin-bottom:1rem;display:none;}
+
+/* GALLERY MANAGER */
+.gallery-manager{display:none;}
+.gallery-manager.active{display:block;}
+.manage-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.manage-header p{color:rgba(255,255,255,.4);font-size:.85rem;}
+.manage-count{background:var(--red);color:#fff;border-radius:100px;padding:.2rem .7rem;font-size:.75rem;font-weight:700;}
+.current-images{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-bottom:1.5rem;max-height:420px;overflow-y:auto;padding-right:.4rem;}
+.current-images::-webkit-scrollbar{width:4px;}
+.current-images::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px;}
+.current-img-item{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:16/9;background:#0a0a0a;border:1px solid rgba(255,255,255,.08);}
+.current-img-item img{width:100%;height:100%;object-fit:cover;}
+.current-img-item .img-actions{position:absolute;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;gap:.5rem;opacity:0;transition:opacity .25s;}
+.current-img-item:hover .img-actions{opacity:1;}
+.img-actions button{background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.img-actions button:hover{background:var(--red);transform:scale(1.1);}
+.img-category{position:absolute;bottom:.4rem;left:.4rem;background:var(--red);color:#fff;padding:.2rem .5rem;border-radius:4px;font-size:.6rem;text-transform:uppercase;font-weight:700;}
+.no-images-msg{grid-column:1/-1;text-align:center;padding:3rem;color:rgba(255,255,255,.25);font-size:.9rem;}
+
+/* ADMIN TRIGGER */
+.admin-trigger{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--gray);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);width:50px;height:50px;border-radius:50%;font-size:1.2rem;cursor:pointer;z-index:90;display:flex;align-items:center;justify-content:center;transition:all .25s;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.admin-trigger:hover{background:var(--red);border-color:var(--red);color:#fff;transform:scale(1.1);}
+
+/* FADE UP */
+.fu{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease;}
+.fu.visible{opacity:1;transform:none;}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .gallery-grid{grid-template-columns:repeat(3,1fr);}
+  .contact-inner{gap:2rem;}
+  .current-images{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:768px){
+  nav{padding:.8rem 1rem;}
+  .nav-links{display:none;}
+  .nav-links.open{display:flex;flex-direction:column;position:fixed;inset:0;background:rgba(10,10,10,.98);backdrop-filter:blur(20px);align-items:center;justify-content:center;gap:2rem;z-index:99;}
+  .nav-links.open a{font-size:1.3rem;}
+  .hamburger{display:flex;}
+  .gallery-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .contact-inner{grid-template-columns:1fr;}
+  .contact-inner>div:last-child{display:none;}
+  footer{padding:2rem 1rem;}
+  .footer-content{flex-direction:column;text-align:center;}
+  .sw{padding:3rem 1rem;}
+  #hero{padding:5rem 1rem 3rem;}
+  .hero-btns{flex-direction:column;align-items:center;}
+  .btn-primary,.btn-ghost{width:100%;max-width:320px;justify-content:center;}
+  .services-grid{grid-template-columns:1fr;}
+  .tech-grid{grid-template-columns:repeat(2,1fr);}
+  .admin-action-btns{flex-direction:column;}
+  .admin-tabs{flex-wrap:wrap;}
+  .preview-grid{grid-template-columns:repeat(2,1fr);}
+  .current-images{grid-template-columns:repeat(2,1fr);}
+  .main-logo{letter-spacing:2px;}
+  .title-input-row{flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:480px){
+  .gallery-grid{grid-template-columns:1fr;gap:10px;}
+  .tech-grid{grid-template-columns:1fr;}
+  .preview-grid{grid-template-columns:1fr;}
+  .current-images{grid-template-columns:1fr;}
+  .filter-btns{gap:.4rem;}
+  .fb{font-size:.75rem;padding:.4rem .9rem;}
+  .admin-panel{padding:1.5rem;}
+  .admin-modal{padding:1.75rem;}
+}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo"><span>AVE</span>&nbsp;CONTENIDOS</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#hero" onclick="closeMenu()">Inicio</a></li>
+    <li><a href="#services" onclick="closeMenu()">Servicios</a></li>
+    <li><a href="#gallery" onclick="closeMenu()">Galería</a></li>
+    <li><a href="#technology" onclick="closeMenu()">Tecnología</a></li>
+    <li><a href="#contact-section" onclick="closeMenu()">Contacto</a></li>
+    <li><a href="https://api.whatsapp.com/send?phone=5492234006806" target="_blank" rel="noopener noreferrer" class="nav-cta" onclick="closeMenu()">Contactar</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="glow glow-1"></div><div class="glow glow-2"></div>
+  <div class="hero-content">
+    <div class="logo-container">
+      <div class="main-logo"><span class="accent">AVE</span>&nbsp;CONTENIDOS</div>
+      <div class="logo-subtitle">Transmisión Profesional</div>
+    </div>
+    <a href="https://www.youtube.com/@AveContenidoAudiovisual" target="_blank" rel="noopener noreferrer" class="live-badge">
+      <div class="live-dot-wrap"><div class="live-dot"></div><div class="live-ring"></div></div>
+      <span>AHORA EN VIVO</span>
+      <span style="width:1px;height:12px;background:rgba(255,255,255,.3);margin:0 .5rem;"></span>
+      <span>YouTube</span>
+      <span style="margin-left:.3rem;">▶</span>
+    </a>
+    <p class="hero-sub">Tu evento en vivo y en todas partes</p>
+    <p class="hero-desc">Transmisión profesional con hasta 8 cámaras FULL HD, conexión satelital Starlink y gráfica en vivo personalizada para deportes, eventos corporativos y más.</p>
+    <div class="hero-btns">
+      <a href="https://api.whatsapp.com/send?phone=5492234006806" target="_blank" rel="noopener noreferrer" class="btn-primary"><span>💬</span> Contactar ahora</a>
+      <a href="#services" class="btn-ghost">Ver servicios <span>→</span></a>
+    </div>
+    <a href="https://api.whatsapp.com/send?phone=5492234006806" target="_blank" rel="noopener noreferrer" class="hero-phone"><span>📱</span> (223) 154-006806</a>
+  </div>
+  <div class="scroll-indicator"><span>scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- SERVICES -->
+<div class="sw" id="services">
+  <div class="fu"><p class="sl">Lo que hacemos</p><h2 class="st">SERVICIOS</h2><p class="sd">Soluciones integrales de transmisión en vivo para todo tipo de evento, con la más alta calidad broadcast.</p></div>
+  <div class="services-grid fu">
+    <div class="sc"><div class="sc-icon">📡</div><h3>Transmisión en Vivo</h3><p>Streaming profesional multiplataforma a YouTube, Facebook, Twitch y TV Web con hasta 8 cámaras FULL HD simultáneas.</p></div>
+    <div class="sc"><div class="sc-icon">🚐</div><h3>Unidad Móvil de TV</h3><p>Móvil broadcast equipado con tecnología de última generación, listo para desplegarse en cualquier locación del país.</p></div>
+    <div class="sc"><div class="sc-icon">🎨</div><h3>Gráfica en Vivo</h3><p>Marcadores deportivos, tiempos, estadísticas, sponsors y overlays personalizados renderizados en tiempo real.</p></div>
+    <div class="sc"><div class="sc-icon">🛰️</div><h3>Conectividad Starlink</h3><p>Conexión satelital propia de alta velocidad y baja latencia para transmitir desde cualquier lugar sin infraestructura local.</p></div>
+    <div class="sc"><div class="sc-icon">🏎️</div><h3>Automovilismo y Deportes</h3><p>Especialistas en cobertura de automovilismo, fútbol, ciclismo y eventos multitudinarios con producción televisiva profesional.</p></div>
+    <div class="sc"><div class="sc-icon">🔒</div><h3>Streaming Privado</h3><p>Plataformas de acceso restringido con sistema de pago integrado por QR o alias, ideal para eventos exclusivos y PPV.</p></div>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<div class="sw" id="gallery">
+  <div class="fu"><p class="sl">Nuestro trabajo</p><h2 class="st">GALERÍA</h2><p class="sd">Capturas de nuestras producciones en vivo. Podcasts, eventos masivos, entrevistas y coberturas deportivas.</p></div>
+  <div class="gallery-top fu">
+    <div class="filter-btns">
+      <button class="fb active" onclick="filterG('all',this)">Todos</button>
+      <button class="fb" onclick="filterG('equipo',this)">Equipo</button>
+      <button class="fb" onclick="filterG('podcast',this)">Podcast / TV</button>
+      <button class="fb" onclick="filterG('evento',this)">Eventos</button>
+    </div>
+  </div>
+  <div class="gallery-grid fu" id="galleryGrid"></div>
+</div>
+
+<!-- TECHNOLOGY -->
+<div class="sw" id="technology">
+  <div class="fu"><p class="sl">Tecnología</p><h2 class="st">EQUIPAMIENTO</h2><p class="sd">Trabajamos con tecnología broadcast de última generación para garantizar la mejor calidad en cada transmisión.</p></div>
+  <div class="tech-grid fu">
+    <div class="ti"><span>Cámaras</span><strong>8x Cámaras FULL HD</strong></div>
+    <div class="ti"><span>Switching</span><strong>ATEM Television Studio 8 Extreme ISO</strong></div>
+    <div class="ti"><span>Conectividad</span><strong>Starlink + 5G Bonding</strong></div>
+    <div class="ti"><span>Streaming</span><strong>Multiplataforma RTMP</strong></div>
+    <div class="ti"><span>Gráficos</span><strong>vMix + Unreal Engine</strong></div>
+    <div class="ti"><span>Audio</span><strong>Consola Digital 16ch</strong></div>
+    <div class="ti"><span>Energía</span><strong>Grupo Electrógeno Propio</strong></div>
+    <div class="ti"><span>Grabación</span><strong>SSD RAID Backup</strong></div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="sw" id="contact-section">
+  <div class="contact-inner">
+    <div class="contact-info fu">
+      <p class="sl">Contacto</p>
+      <h2 class="st">TRABAJEMOS JUNTOS</h2>
+      <p>Estamos listos para llevar tu evento al siguiente nivel. Contáctanos y conversemos sobre tu proyecto.</p>
+      <div class="contact-links">
+        <a href="https://api.whatsapp.com/send?phone=5492234006806" target="_blank" rel="noopener noreferrer" class="cl">
+          <div class="cl-icon">💬</div>
+          <div class="cl-text"><span>WhatsApp</span><strong>+54 9 223 400-6806</strong></div>
+        </a>
+        <a href="mailto:avecontenidos@gmail.com" class="cl">
+          <div class="cl-icon">✉️</div>
+          <div class="cl-text"><span>Email</span><strong>avecontenidos@gmail.com</strong></div>
+        </a>
+        <a href="#" class="cl">
+          <div class="cl-icon">📍</div>
+          <div class="cl-text"><span>Ubicación</span><strong>Mar del Plata, Argentina</strong></div>
+        </a>
+      </div>
+    </div>
+    <div></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-logo"><span>AVE</span>&nbsp;CONTENIDOS</div>
+    <p>© 2025 AVE Contenidos. Todos los derechos reservados.</p>
+    <div class="footer-socials">
+      <a href="https://youtube.com/@AveContenidoAudiovisual" target="_blank">YouTube</a>
+      <a href="#" target="_blank">Instagram</a>
+      <a href="#" target="_blank">Facebook</a>
+    </div>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lb-close" onclick="closeLightboxBtn()">×</button>
+  <button class="lb-btn" id="lb-prev" onclick="changeImage(-1)">‹</button>
+  <img class="lb-img" id="lbImg" src="" alt="">
+  <button class="lb-btn" id="lb-next" onclick="changeImage(1)">›</button>
+  <div class="lb-caption" id="lbCaption"></div>
+</div>
+
+<!-- ADMIN OVERLAY -->
+<div id="admin-overlay" onclick="closeAdminOverlay(event)">
+
+  <!-- LOGIN -->
+  <div class="admin-modal" id="adminLogin">
+    <button class="admin-close" onclick="closeAdminBtn()">×</button>
+    <h2>Admin Panel</h2>
+    <p class="admin-hint">Ingresá tus credenciales para gestionar la galería de imágenes.</p>
+    <div class="admin-field">
+      <label>Usuario</label>
+      <input type="text" id="adminUser" placeholder="admin" autocomplete="username">
+    </div>
+    <div class="admin-field">
+      <label>Contraseña</label>
+      <input type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <button class="admin-login-btn" onclick="login()">🔐 Ingresar</button>
+    <div class="admin-error" id="adminError">❌ Usuario o contraseña incorrectos</div>
+  </div>
+
+  <!-- PANEL -->
+  <div class="admin-panel" id="adminPanel">
+    <button class="admin-close" onclick="closeAdminBtn()">×</button>
+    <h2>Galería</h2>
+    <p class="sub">Subí y gestioná las imágenes de tu sitio</p>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" id="tabUpload" onclick="switchTab('upload',this)">📤 Subir Fotos</button>
+      <button class="admin-tab" id="tabManage" onclick="switchTab('manage',this)">🖼️ Gestionar</button>
+    </div>
+
+    <!-- ── UPLOAD TAB ── -->
+    <div id="uploadTab">
+      <div class="success-msg" id="successMsg">✅ Fotos guardadas en la galería</div>
+      <div class="error-msg" id="errorMsg"></div>
+
+      <!-- Barra de uso de almacenamiento -->
+      <div class="storage-bar-wrap">
+        <span style="font-size:.75rem;color:rgba(255,255,255,.35);">Almacenamiento usado</span>
+        <div class="storage-bar-track"><div class="storage-bar-fill" id="storageFill" style="width:0%"></div></div>
+        <span class="storage-bar-label" id="storageLabel">— KB</span>
+      </div>
+
+      <div class="drop-area" id="dropArea">
+        <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/webp,image/gif" onchange="handleFiles(this.files)">
+        <div class="d-icon">📸</div>
+        <p><strong>Arrastrá fotos aquí</strong><br>o hacé clic para seleccionar</p>
+        <p style="font-size:.75rem;color:rgba(255,255,255,.28);margin-top:.6rem;">JPG · PNG · WEBP · GIF &nbsp;|&nbsp; Máx 8 MB por foto</p>
+      </div>
+
+      <!-- Título personalizado -->
+      <div class="title-input-row">
+        <label>Título</label>
+        <input type="text" id="imgTitle" placeholder="Ej: Evento Deportivo — Mar del Plata" maxlength="60">
+      </div>
+
+      <!-- Categoría -->
+      <select class="cat-select" id="catSelect">
+        <option value="equipo">🎥 Equipo</option>
+        <option value="podcast">🎙️ Podcast / TV</option>
+        <option value="evento">🎉 Eventos</option>
+      </select>
+
+      <div class="preview-grid" id="previewGrid"></div>
+
+      <div class="upload-progress" id="uploadProgress">
+        <div class="upload-progress-bar" id="progressBar"></div>
+      </div>
+      <p class="upload-status" id="uploadStatus"></p>
+
+      <div class="admin-action-btns">
+        <button class="btn-confirm" id="uploadBtn" onclick="uploadFiles()" disabled>
+          ⬆️ &nbsp;Guardar en galería
+        </button>
+        <button class="btn-logout" onclick="logout()">Salir</button>
+      </div>
+    </div>
+
+    <!-- ── MANAGE TAB ── -->
+    <div class="gallery-manager" id="manageTab">
+      <div class="success-msg" id="deleteSuccessMsg">✅ Imagen eliminada</div>
+      <div class="manage-header">
+        <p>Pasá el cursor sobre una foto y presioná 🗑️ para eliminar</p>
+        <span class="manage-count" id="manageCount">0</span>
+      </div>
+      <div class="current-images" id="currentImages"></div>
+      <button class="btn-logout" onclick="logout()" style="width:100%;margin-top:.5rem;">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTÓN ADMIN -->
+<button class="admin-trigger" onclick="openAdmin()" title="Panel de administración">⚙️</button>
+
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIGURACIÓN — cambiá usuario y contraseña acá
+// ═══════════════════════════════════════════════
+const ADMIN_USER = 'ave';
+const ADMIN_PASS = 'Ave2024!';
+
+// Clave de localStorage
+const STORAGE_KEY = 'aveGallery_v2';
+
+// ═══════════════════════════════════════════════
+//  NAVEGACIÓN
+// ═══════════════════════════════════════════════
+function toggleMenu(){
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('navLinks').classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('navLinks').classList.remove('open');
+}
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+  const maxScroll = document.body.scrollHeight - window.innerHeight;
+  document.getElementById('prog').style.width = (maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0) + '%';
+});
+
+// ═══════════════════════════════════════════════
+//  SCROLL REVEAL
+// ═══════════════════════════════════════════════
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:.1});
+document.querySelectorAll('.fu').forEach(el=>revealObserver.observe(el));
+
+// ═══════════════════════════════════════════════
+//  GALERÍA — datos persistentes en localStorage
+// ═══════════════════════════════════════════════
+function loadGallery(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveGallery(arr){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+  catch(e){ showUploadError('Almacenamiento lleno. Eliminá algunas fotos antes de subir más.'); }
+}
+
+let galleryImages = loadGallery();
+
+// ═══════════════════════════════════════════════
+//  RENDER GALERÍA PÚBLICA
+// ═══════════════════════════════════════════════
+function renderGallery(){
+  const grid = document.getElementById('galleryGrid');
+  if(galleryImages.length === 0){
+    grid.innerHTML = '<div class="gallery-empty"><span>📷</span>Próximamente aparecerán nuestras producciones aquí.</div>';
+    return;
+  }
+  grid.innerHTML = galleryImages.map(img=>`
+    <div class="gitem" data-cat="${img.cat}" onclick="openLightbox(${img.id})">
+      <img src="${img.src}" alt="${img.title}" loading="lazy">
+      <div class="g-overlay"><span>${img.title}</span></div>
+    </div>
+  `).join('');
+}
+renderGallery();
+
+// ═══════════════════════════════════════════════
+//  FILTROS
+// ═══════════════════════════════════════════════
+function filterG(cat, btn){
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.gitem').forEach(item=>{
+    item.style.display = (cat==='all' || item.dataset.cat===cat) ? '' : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  LIGHTBOX
+// ═══════════════════════════════════════════════
+let currentImgId = null;
+const lb      = document.getElementById('lightbox');
+const lbImg   = document.getElementById('lbImg');
+const lbCap   = document.getElementById('lbCaption');
+
+function openLightbox(id){
+  currentImgId = id;
+  const img = galleryImages.find(i=>i.id===id);
+  if(!img) return;
+  lbImg.src = img.src;
+  lbCap.textContent = img.title;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e){ if(e.target===lb) closeLightboxBtn(); }
+function closeLightboxBtn(){ lb.classList.remove('open'); document.body.style.overflow = ''; }
+function changeImage(dir){
+  const idx = galleryImages.findIndex(i=>i.id===currentImgId);
+  const newIdx = (idx + dir + galleryImages.length) % galleryImages.length;
+  currentImgId = galleryImages[newIdx].id;
+  lbImg.src = galleryImages[newIdx].src;
+  lbCap.textContent = galleryImages[newIdx].title;
+}
+document.addEventListener('keydown',(e)=>{
+  if(!lb.classList.contains('open')) return;
+  if(e.key==='Escape') closeLightboxBtn();
+  if(e.key==='ArrowLeft') changeImage(-1);
+  if(e.key==='ArrowRight') changeImage(1);
+});
+
+// ═══════════════════════════════════════════════
+//  ADMIN — abrir / cerrar
+// ═══════════════════════════════════════════════
+function openAdmin(){
+  document.getElementById('admin-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(()=>document.getElementById('adminUser').focus(), 100);
+}
+function closeAdminOverlay(e){
+  if(e.target === document.getElementById('admin-overlay')) closeAdminBtn();
+}
+function closeAdminBtn(){
+  document.getElementById('admin-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(()=>{
+    document.getElementById('adminLogin').style.display = 'block';
+    document.getElementById('adminPanel').classList.remove('open');
+    document.getElementById('adminUser').value = '';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('adminError').style.display = 'none';
+  }, 300);
+}
+
+// ═══════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════
+function login(){
+  const user = document.getElementById('adminUser').value.trim();
+  const pass = document.getElementById('adminPass').value;
+  if(user === ADMIN_USER && pass === ADMIN_PASS){
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminPanel').classList.add('open');
+    document.getElementById('adminError').style.display = 'none';
+    switchTab('upload', document.getElementById('tabUpload'));
+    updateStorageBar();
+  } else {
+    document.getElementById('adminError').style.display = 'block';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('adminPass').focus();
+  }
+}
+function logout(){ closeAdminBtn(); }
+
+// ═══════════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════════
+function switchTab(tab, btn){
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  if(tab === 'upload'){
+    document.getElementById('uploadTab').style.display = 'block';
+    document.getElementById('manageTab').classList.remove('active');
+    updateStorageBar();
+  } else {
+    document.getElementById('uploadTab').style.display = 'none';
+    document.getElementById('manageTab').classList.add('active');
+    loadManageImages();
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  BARRA DE ALMACENAMIENTO
+// ═══════════════════════════════════════════════
+function updateStorageBar(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY) || '';
+    const kb  = (raw.length * 2 / 1024).toFixed(0);
+    const max = 4500; // ~4.5 MB aprox límite localStorage
+    const pct = Math.min((kb / max) * 100, 100);
+    document.getElementById('storageFill').style.width  = pct + '%';
+    document.getElementById('storageFill').style.background = pct > 80 ? '#ff6060' : '';
+    document.getElementById('storageLabel').textContent = kb > 1024 ? (kb/1024).toFixed(1)+' MB' : kb+' KB';
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════
+//  DRAG & DROP
+// ═══════════════════════════════════════════════
+let filesToUpload = [];
+const dropArea = document.getElementById('dropArea');
+
+['dragenter','dragover','dragleave','drop'].forEach(ev=>{
+  dropArea.addEventListener(ev, e=>{ e.preventDefault(); e.stopPropagation(); });
+});
+['dragenter','dragover'].forEach(ev=>{
+  dropArea.addEventListener(ev, ()=>dropArea.classList.add('over'));
+});
+['dragleave','drop'].forEach(ev=>{
+  dropArea.addEventListener(ev, ()=>dropArea.classList.remove('over'));
+});
+dropArea.addEventListener('drop', e=>handleFiles(e.dataTransfer.files));
+
+// ═══════════════════════════════════════════════
+//  MANEJO DE ARCHIVOS
+// ═══════════════════════════════════════════════
+const MAX_SIZE = 8 * 1024 * 1024; // 8 MB
+
+function handleFiles(files){
+  const valid = Array.from(files).filter(f=>{
+    if(!f.type.startsWith('image/')){ showUploadError('Solo se permiten imágenes (JPG, PNG, WEBP, GIF).'); return false; }
+    if(f.size > MAX_SIZE){ showUploadError(`"${f.name}" supera 8 MB y fue omitida.`); return false; }
+    return true;
+  });
+  if(valid.length === 0) return;
+  filesToUpload = valid;
+  renderPreview();
+  document.getElementById('uploadBtn').disabled = false;
+}
+
+function renderPreview(){
+  const grid = document.getElementById('previewGrid');
+  const cat  = document.getElementById('catSelect').value;
+  const catNames = {equipo:'Equipo', podcast:'Podcast/TV', evento:'Eventos'};
+  grid.innerHTML = filesToUpload.map((file, idx)=>{
+    const url = URL.createObjectURL(file);
+    return `<div class="prev-item">
+      <img src="${url}" alt="">
+      <button class="prev-remove" onclick="removeFile(${idx})">×</button>
+      <div class="prev-info"><span>${catNames[cat]}</span></div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('catSelect').addEventListener('change', ()=>{
+  if(filesToUpload.length > 0) renderPreview();
+});
+
+function removeFile(idx){
+  filesToUpload.splice(idx, 1);
+  renderPreview();
+  if(filesToUpload.length === 0) document.getElementById('uploadBtn').disabled = true;
+}
+
+// ═══════════════════════════════════════════════
+//  CONVERTIR A BASE64 (guarda la imagen en el sitio)
+// ═══════════════════════════════════════════════
+function fileToBase64(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload  = ()=>resolve(reader.result);
+    reader.onerror = ()=>reject(new Error('Error al leer archivo'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// Redimensiona la imagen a max 1280px de ancho manteniendo proporción
+function resizeImage(file, maxW=1280, quality=0.82){
+  return new Promise((resolve)=>{
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = ()=>{
+      URL.revokeObjectURL(url);
+      let w = img.naturalWidth;
+      let h = img.naturalHeight;
+      if(w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+      const canvas = document.createElement('canvas');
+      canvas.width  = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = url;
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  SUBIR FOTOS
+// ═══════════════════════════════════════════════
+async function uploadFiles(){
+  if(filesToUpload.length === 0) return;
+
+  const btn      = document.getElementById('uploadBtn');
+  const progress = document.getElementById('uploadProgress');
+  const bar      = document.getElementById('progressBar');
+  const status   = document.getElementById('uploadStatus');
+  const success  = document.getElementById('successMsg');
+  const cat      = document.getElementById('catSelect').value;
+  const titleRaw = document.getElementById('imgTitle').value.trim();
+
+  btn.disabled = true;
+  progress.style.display = 'block';
+  status.style.display   = 'block';
+
+  const catNames = {equipo:'Equipo', podcast:'Podcast / TV', evento:'Eventos'};
+  const newImages = [];
+
+  for(let i = 0; i < filesToUpload.length; i++){
+    const file = filesToUpload[i];
+    status.textContent = `Procesando ${i+1} de ${filesToUpload.length}…`;
+    bar.style.width = Math.round(((i+1)/filesToUpload.length)*100) + '%';
+
+    try{
+      const base64 = await resizeImage(file);
+      const title  = filesToUpload.length === 1 && titleRaw
+        ? titleRaw
+        : (titleRaw ? `${titleRaw} (${i+1})` : `${catNames[cat]} ${new Date().toLocaleDateString('es-AR')}`);
+      newImages.push({ id: Date.now() + i, src: base64, cat, title });
+    } catch(e){
+      showUploadError(`No se pudo procesar "${file.name}".`);
+    }
+    // pequeña pausa para no bloquear UI
+    await new Promise(r=>setTimeout(r, 80));
+  }
+
+  if(newImages.length > 0){
+    galleryImages = [...newImages, ...galleryImages];
+    saveGallery(galleryImages);
+    renderGallery();
+    updateStorageBar();
+
+    progress.style.display = 'none';
+    status.style.display   = 'none';
+    bar.style.width = '0';
+    success.style.display  = 'block';
+    filesToUpload = [];
+    document.getElementById('previewGrid').innerHTML = '';
+    document.getElementById('imgTitle').value = '';
+    document.getElementById('fileInput').value = '';
+    setTimeout(()=>{ success.style.display='none'; btn.disabled=false; }, 3000);
+  } else {
+    progress.style.display = 'none';
+    status.style.display   = 'none';
+    btn.disabled = false;
+  }
+}
+
+function showUploadError(msg){
+  const err = document.getElementById('errorMsg');
+  err.textContent = '⚠️ ' + msg;
+  err.style.display = 'block';
+  setTimeout(()=>err.style.display='none', 5000);
+}
+
+// ═══════════════════════════════════════════════
+//  GESTIONAR IMÁGENES
+// ═══════════════════════════════════════════════
+function loadManageImages(){
+  const container = document.getElementById('currentImages');
+  document.getElementById('manageCount').textContent = galleryImages.length;
+  const catNames  = {equipo:'EQUIPO', podcast:'PODCAST', evento:'EVENTOS'};
+
+  if(galleryImages.length === 0){
+    container.innerHTML = '<div class="no-images-msg">No hay imágenes en la galería todavía.</div>';
+    return;
+  }
+  container.innerHTML = galleryImages.map(img=>`
+    <div class="current-img-item">
+      <img src="${img.src}" alt="${img.title}" loading="lazy">
+      <span class="img-category">${catNames[img.cat] || img.cat}</span>
+      <div class="img-actions">
+        <button onclick="deleteImage(${img.id})" title="Eliminar">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteImage(id){
+  if(!confirm('¿Eliminar esta imagen de la galería?')) return;
+  galleryImages = galleryImages.filter(i=>i.id !== id);
+  saveGallery(ga
